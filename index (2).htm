@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kitsch Soulmate Finder</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,900;1,900&display=swap');
+        
+        /* 기본 레이아웃 */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Pretendard', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body, html { width: 100%; height: 100%; overflow: hidden; background-color: #000; }
+
+        .screen { width: 100%; height: 100%; display: none; position: relative; overflow: hidden; flex-direction: column; }
+        .active { display: flex; }
+
+        /* 0. 상단 오디오 바 */
+        .audio-bar {
+            position: fixed; top: 0; width: 100%; height: 50px; background: rgba(255, 192, 203, 0.9);
+            backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: center;
+            z-index: 2000; border-bottom: 3px solid #000; gap: 10px;
+        }
+
+        /* 1. 메인 화면 */
+        #main-screen { background-image: url('https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/mainbg.png'); background-size: cover; background-repeat: no-repeat; justify-content: center; align-items: center; cursor: pointer; }
+         .main-bg-img { position: absolute; width: 100%; height: 100%; z-index: -1; object-fit: cover; opacity: 0.6; }
+         .logo-area-img { position: fixed; }
+        .touch-to-start {
+            color: white; font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px #F527B7;
+            animation: blink 1.5s infinite;
+        }
+
+        /* 2. 캐릭터 사물함 페이지 (배경: 시멘트 그레이) */
+        #locker-screen { background-image: url('https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/background_lockers.png'); padding-top: 100px; align-items: center; }
+        .locker-logo { 
+            position: absolute; top: 65px; left: 20px; z-index: 1500;
+            font-family: 'Playfair Display', serif; font-weight: 900; font-size: 1.4rem; color: #ff69b4; 
+            text-shadow: 1px 1px 0px #000; cursor: pointer;
+        }
+        .locker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .locker {
+            width: 95px; height: 110px; background: #ffb6c1; border: 3px solid #000; 
+            box-shadow: 5px 5px 0px #ff69b4; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            font-size: 13px; font-weight: 900; cursor: pointer;
+        }
+        .locker.test-locker { background: #b0b0b0; box-shadow: 5px 5px 0px #666; }
+
+        /* 3. 캐릭터 개별 상세 페이지 */
+        #detail-screen { background: #ffe6f0; }
+        .close-btn { position: absolute; top: 70px; right: 20px; padding: 8px 15px; background: #000; color: #fff; font-weight: 900; z-index: 1600; cursor: pointer; }
+        .profile-layout { display: flex; width: 100%; height: 100%; padding: 100px 20px 20px; align-items: center; }
+        .standing-zone { width: 50%; height: 80%; display: flex; align-items: center; justify-content: center; }
+        .info-zone { width: 50%; display: flex; flex-direction: column; gap: 15px; padding-left: 10px; }
+        .info-bar { background: white; border: 3px solid #000; padding: 12px; border-radius: 8px; box-shadow: 4px 4px 0px #ff69b4; font-size: 14px; font-weight: 900; }
+
+        /* 4. 테스트 화면 */
+        #test-screen { background: #fff; padding: 120px 20px 20px; align-items: center; text-align: center; }
+        .test-title { font-family: 'Playfair Display', serif; font-size: 1.8rem; color: #ff69b4; text-shadow: 2px 2px #000; margin-bottom: 30px; }
+        .choice-btn { 
+            width: 100%; padding: 20px; margin: 10px 0; border: 4px solid #000; background: #fff; 
+            box-shadow: 6px 6px 0px #000; font-weight: 900; font-size: 1rem; cursor: pointer; 
+        }
+
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+    </style>
+</head>
+<body>
+
+    <div class="audio-bar">
+        <span style="font-size: 12px; font-weight: 900;">🎧 DOWNTOWN GIRL</span>
+        <input type="range" id="vol-slider" min="0" max="1" step="0.1" value="0.5" style="accent-color: #ff69b4; width: 80px;">
+    </div>
+    <audio id="bgm" loop>
+    <source src="https://github.com/yermigionic-web/jb/raw/refs/heads/main/Downtown%20Girl.mp3" type="audio/mpeg"></audio>
+
+    <section id="main-screen" class="screen active" onclick="goToLocker()">
+        <div class="logo-area img-placeholder"><img src="https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/mainlogo.png" width="100%" height="100%">
+        </div>
+        <div class="touch-to-start">touch to start</div>
+    </section>
+
+    <section id="locker-screen" class="screen">
+        <div class="locker-logo" onclick="location.reload()"><img src="https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/mainlogo.png" width="5%" height="5%"></div>
+        <div class="locker-grid" id="locker-grid"></div>
+    </section>
+
+    <section id="detail-screen" class="screen">
+        <div class="close-btn" onclick="showScreen('locker-screen')">LOOK AWAY!</div>
+        <div class="profile-layout" id="profile-content">
+            </div>
+    </section>
+
+    <section id="test-screen" class="screen">
+        <h1 class="test-title">FIND YOUR SOUL-BRAT!</h1>
+        <div id="test-container" style="width:100%;">
+            <div id="q-text" style="height:100px; font-size:1.2rem; font-weight:900; display:flex; align-items:center; justify-content:center;">질문 로딩...</div>
+            <button class="choice-btn" id="btn1" onclick="answer(0)">선택지 1</button>
+            <button class="choice-btn" id="btn2" onclick="answer(1)">선택지 2</button>
+        </div>
+    </section>
+
+    <script>
+   const characters = [
+            { name: "매디슨 라로슈", grade: "Sophomore", trait: "패션디자인/퀸 비", quote: "You look outdated. Get something new. Like me. (구리네. 신상 좀 들여. 나 같은 거.)", img: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/madison_standing.png", sdImg: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/madison_chibi.png" },
+            { name: "라일리 녹스", grade: "Junior", trait: "기술공업/톰보이/헤테로?", quote: "I like boys. End of discussion. (나 남자 좋아해. 대화 끝.)", img: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/riley_standing.png", sdImg: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/riley_chibi.png" },
+            { name: "타비", grade: "Freshman", trait: "응용윤리학/컬트 생존자", quote: "I don't do drugs, praying, and friends. (난 마약, 기도, 친구 안 해.)", img: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/tavi_standing.png", sdImg: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/tavi_chibi.png" },
+            { name: "캐서디 토레스", grade: "Junior", trait: "PE/치어리더/싸이코?", quote: "I take actions of all kinds. Try me. (난 뭐든 맞다이 깨는 편이야. 증명해 줄까?)", img: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/tores_standing.png", sdImg: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/cassidy_chibi.png" },
+            { name: "로완 베일", grade: "Sophomore", trait: "화학/EMO", quote: "...Slipknot? Poser. (슬립낫 듣는다고? 알못.)", img: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/rowan_standing.png", sdImg: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/rowan_chibi.png"},
+            { name: "레나 초", grade: "Sophomore", trait: "통계학/아시안 너드/장녀 감성", quote: "...No offense taken. And I'm, for the last time, korean. (나쁘게 생각은 안 할게. 진짜 마지막으로 말하는 건데, 난 한국인이야.)", img:"https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/lena_standing.png", sdImg: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/lena_chibi.png" },
+            { name: "클레어 도넬리", grade: "Sophomore", trait: "AP정부정치학/반장/여친 있음", quote: "You can tell me anything. Love counsel? Maybe. (뭐든 말해 줘도 좋아. 연애 상담? 글쎄.)", img: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/claire_standing.png", sdImg: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/claire_chibi.png" },
+            { name: "리라 나바로", grade: "Freshman", trait: "천문학/괴짜", quote: "Did you notice the interstellar shift? (성간 이동, 눈치챘어?)", img:"https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/navarro_standing.png", sdImg: "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/lyra_chibi.png" }
+        ];
+
+        const testQs = [
+            { q: "새 학기 첫날, 당신의 자리는?", a: ["창가 맨 뒷자리", "선생님 바로 앞자리"], w: [[0, 1, 2, 3, 4], [5, 6, 7]] },
+            { q: "매점에서 당신의 픽은?", a: ["달콤한 초코/딸기우유", "톡 쏘는 탄산음료"], w: [[0, 4, 6, 7], [1, 2, 3, 5]] },
+            { q: "동아리를 고른다면?", a: ["조용한 독서/예술부", "화려한 밴드/운동부"], w: [[5, 6, 7], [0, 3, 4]] },
+            { q: "이상형의 첫인상은?", a: ["다정한 모범생", "위험한 매력의 반항아"], w: [[4, 5, 6], [0, 1, 3, 4]] },
+            { q: "지각했을 때 당신의 행동?", a: ["담을 넘어 몰래 잠입", "당당하게 정면 돌파"], w: [[2, 4, 7], [0, 3, 6]] },
+            { q: "방과 후 최고의 데이트?", a: ["조용한 북카페", "시끌벅적 놀이공원"], w: [[2, 5, 7], [1, 3, 4]] },
+            { q: "고민이 생겼을 때?", a: ["혼자 생각 정리하기", "친구에게 털어놓기"], w: [[2, 4, 5], [0, 1, 3]] },
+            { q: "나에게 사랑이란?", a: ["운명적인 이끌림", "천천히 쌓이는 우정"], w: [[0, 1, 7], [2, 5, 6]] }
+        ];
+        let testIdx = 0; let scores = new Array(8).fill(0);
+        const bgm = document.getElementById('bgm');
+
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+        }
+
+    function goToLocker() {
+    // 음악 재생 명령
+    bgm.play().then(() => {
+        console.log("BGM 재생 시작!");
+    }).catch((error) => {
+        console.log("재생 실패: ", error);
+        // 사용자 상호작용이 아직 없을 경우 에러가 날 수 있음
+    });
+
+    showScreen('locker-screen');
+    initLockers();
+}
+
+        function initLockers() {
+            const grid = document.getElementById('locker-grid');
+            grid.innerHTML = '';
+            characters.forEach((c, idx) => {
+                const l = document.createElement('div');
+                l.className = 'locker';
+                l.innerHTML = `📦<br>${c.name}`;
+                l.onclick = () => openProfile(idx);
+                grid.appendChild(l);
+            });
+            const t = document.createElement('div');
+            t.className = 'locker test-locker';
+            t.innerHTML = `🗝️<br>TEST!`;
+            t.onclick = startTest;
+            grid.appendChild(t);
+        }
+
+        function openProfile(idx) {
+            const c = characters[idx];
+            document.getElementById('profile-content').innerHTML = `
+              <div class="standing-zone">
+            <img src="${c.img}" alt="${c.name} 스탠딩" style="height:100%; object-fit:contain;">
+            </div>
+                <div class="info-zone">
+                    <div class="info-bar">이름: ${c.name}</div>
+                    <div class="info-bar">학년: ${c.grade}</div>
+                    <div class="info-bar">특징: ${c.trait}</div>
+                </div>
+            `;
+            showScreen('detail-screen');
+        }
+
+        function startTest() {
+            testIdx = 0; scores.fill(0);
+            showScreen('test-screen');
+            renderTest();
+        }
+
+        function renderTest() {
+            if(testIdx < testQs.length) {
+                const q = testQs[testIdx];
+                document.getElementById('q-text').innerText = q.q;
+                document.getElementById('btn1').innerText = q.a[0];
+                document.getElementById('btn2').innerText = q.a[1];
+            } else {
+                showResult();
+            }
+        }
+
+        function answer(idx) {
+            testQs[testIdx].w[idx].forEach(id => scores[id]++);
+            testIdx++; renderTest();
+        }
+
+       function showResult() {
+    // 가장 높은 점수를 받은 캐릭터 찾기 (기존 코드)
+    let win = scores.indexOf(Math.max(...scores));
+    const p = characters[win];
+
+    // 결과 화면 HTML 생성
+    document.getElementById('test-container').innerHTML = `
+        <div style="padding:20px; border:4px solid #000; box-shadow:8px 8px 0px #ff69b4; background:#fff; animation: popIn 0.5s ease-out;">
+            <p style="color:#888; font-weight:bold; font-size:12px; margin-bottom:10px;">YOUR JUNE BRAT IS...</p>
+            
+            <div class="result-sd-zone" style="width:100%; height:150px; display:flex; align-items:center; justify-content:center; margin-bottom:15px;">
+                <img src="${p.sdImg}" alt="${p.name} SD" style="height:100%; object-fit:contain;">
+            </div>
+            
+            <h2 style="font-size:2rem; color:#ff69b4; text-shadow:2px 2px #000; margin-bottom:15px;">✨ ${p.name} ✨</h2>
+            <p style="background:#f9f9f9; padding:15px; border-radius:10px; font-style:italic; font-size:14px; margin-bottom:20px;">"${p.quote}"</p>
+            <button class="choice-btn" onclick="showScreen('locker-screen')" style="background:#ff69b4; color:#fff; border:none; margin:0;">BACK TO LOCKER</button>
+        </div>
+    `;
+}
+
+        document.getElementById('vol-slider').addEventListener('input', (e) => bgm.volume = e.target.value);
+    </script>
+</body>
+</html>
