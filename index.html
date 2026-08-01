@@ -38,12 +38,13 @@
 
     /* ========== floating SVG décor layer ========== */
     .decor-layer {
-      position: fixed; inset: 0; pointer-events: none; z-index: 50; overflow: hidden;
+      position: fixed; inset: 0; pointer-events: none !important; z-index: 5; overflow: hidden;
     }
+    .decor-layer * { pointer-events: none !important; }
     .decor-layer svg.floaty {
       position: absolute;
       animation: floaty 5s ease-in-out infinite;
-      opacity: 0.85;
+      opacity: 0.9;
       filter: drop-shadow(2px 2px 0 rgba(26,8,16,0.25));
     }
     .decor-layer .d1 { top: 12%; left: 4%; width: 42px; animation-delay: 0s; }
@@ -127,8 +128,16 @@
       display: none; flex-direction: column;
       padding-top: var(--safe-top);
       overflow: hidden;
+      z-index: 20;
+      pointer-events: auto;
     }
     .screen.active { display: flex; }
+    .screen button, .screen .locker, #main-screen {
+      position: relative;
+      z-index: 30;
+      pointer-events: auto;
+      cursor: pointer;
+    }
 
     /* ========== MAIN / SPLASH ========== */
     #main-screen {
@@ -213,8 +222,10 @@
     /* ========== LOCKER HALL ========== */
     #locker-screen {
       background:
-        repeating-linear-gradient(90deg, #2a121c 0 28px, #1a0810 28px 30px),
-        linear-gradient(180deg, #3a1828, #1a0810);
+        radial-gradient(circle at 15% 25%, #ffc8e8 0%, transparent 40%),
+        radial-gradient(circle at 85% 75%, #e8b4ff 0%, transparent 42%),
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.22) 0 18px, rgba(255,143,200,0.15) 18px 20px),
+        linear-gradient(165deg, #fff0f7 0%, #ffb8dc 45%, #ff7eb9 100%);
       align-items: center;
       overflow-y: auto;
       padding-bottom: 40px;
@@ -235,7 +246,7 @@
     }
     .hall-chip {
       font-size: 10px; font-weight: 800; letter-spacing: 0.1em;
-      background: var(--baby); border: 2.5px solid var(--ink);
+      background: #fff; border: 2.5px solid var(--ink);
       border-radius: 999px; padding: 6px 10px;
       box-shadow: 2px 2px 0 var(--hot);
       white-space: nowrap;
@@ -243,10 +254,12 @@
     .locker-wall {
       width: min(96vw, 480px);
       margin: 8px auto 0;
-      background: linear-gradient(180deg, #ffc1de, #ff8ec8 40%, #ff5fb2);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.45), transparent 30%),
+        linear-gradient(180deg, #ffd6ea, #ff9ecf 45%, #ff5fb2);
       border: 4px solid var(--ink);
       border-radius: 24px;
-      box-shadow: var(--shadow-lg), inset 0 0 0 6px rgba(255,255,255,0.25);
+      box-shadow: var(--shadow-lg), 10px 10px 0 rgba(255,45,149,0.35), inset 0 0 0 6px rgba(255,255,255,0.28);
       padding: 22px 16px 28px;
       position: relative;
     }
@@ -688,22 +701,26 @@
       <path d="M14 36 Q32 42 50 36" fill="none" stroke="#fff" stroke-width="2" opacity="0.5"/>
     </symbol>
     <symbol id="logo-june" viewBox="0 0 360 160">
-      <!-- sticker plate -->
-      <rect x="8" y="18" width="344" height="124" rx="28" fill="#fff" stroke="#1a0810" stroke-width="5"/>
-      <rect x="18" y="28" width="324" height="104" rx="22" fill="url(#logoGrad)" stroke="#1a0810" stroke-width="3"/>
-      <!-- sparkles -->
-      <path d="M40 48 L43 56 L52 58 L43 60 L40 68 L37 60 L28 58 L37 56 Z" fill="#fff"/>
-      <path d="M310 100 L313 106 L320 108 L313 110 L310 116 L307 110 L300 108 L307 106 Z" fill="#FFE566"/>
-      <!-- wordmark -->
-      <text x="180" y="78" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="42" font-weight="900" fill="#fff" stroke="#1a0810" stroke-width="3" paint-order="stroke">JUNE</text>
-      <text x="180" y="118" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="38" font-weight="900" fill="#FF2D95" stroke="#1a0810" stroke-width="3" paint-order="stroke">BRATS ★</text>
       <defs>
         <linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">
           <stop offset="0%" stop-color="#FFB8DC"/>
-          <stop offset="50%" stop-color="#FF5FB2"/>
+          <stop offset="45%" stop-color="#FF5FB2"/>
           <stop offset="100%" stop-color="#E8B4FF"/>
         </linearGradient>
+        <linearGradient id="wordGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="45%" stop-color="#FFE0F0"/>
+          <stop offset="100%" stop-color="#FF2D95"/>
+        </linearGradient>
       </defs>
+      <rect x="8" y="18" width="344" height="124" rx="28" fill="#fff" stroke="#1a0810" stroke-width="5"/>
+      <rect x="18" y="28" width="324" height="104" rx="22" fill="url(#logoGrad)" stroke="#1a0810" stroke-width="3"/>
+      <path d="M40 48 L43 56 L52 58 L43 60 L40 68 L37 60 L28 58 L37 56 Z" fill="#fff"/>
+      <path d="M310 100 L313 106 L320 108 L313 110 L310 116 L307 110 L300 108 L307 106 Z" fill="#FFE566"/>
+      <circle cx="300" cy="48" r="7" fill="#9DFFD0" stroke="#1a0810" stroke-width="2"/>
+      <circle cx="55" cy="110" r="5" fill="#FFE566" stroke="#1a0810" stroke-width="2"/>
+      <text x="180" y="76" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="40" font-weight="900" fill="#fff" stroke="#1a0810" stroke-width="4" paint-order="stroke">JUNE</text>
+      <text x="180" y="118" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="40" font-weight="900" fill="#FF2D95" stroke="#1a0810" stroke-width="4" paint-order="stroke">BRATS ★</text>
     </symbol>
   </svg>
 
@@ -730,7 +747,7 @@
   </audio>
 
   <!-- ========== MAIN ========== -->
-  <section id="main-screen" class="screen active" onclick="goToLocker()" role="button" tabindex="0" aria-label="Touch to start">
+  <section id="main-screen" class="screen active" role="button" tabindex="0" aria-label="Touch to start">
     <div class="splash-frame">
       <div class="splash-sticker-bg"></div>
       <span class="spark" style="top:10%;left:8%;animation-delay:0s"></span>
@@ -766,7 +783,7 @@
   <!-- ========== DETAIL ========== -->
   <section id="detail-screen" class="screen">
     <div class="detail-top">
-      <button class="close-btn" type="button" onclick="showScreen('locker-screen')">LOOK AWAY!</button>
+      <button class="close-btn" type="button">LOOK AWAY!</button>
     </div>
     <div class="profile-card" id="profile-content"></div>
   </section>
@@ -997,28 +1014,36 @@
         const l = document.createElement("button");
         l.type = "button";
         l.className = "locker";
+        l.setAttribute("aria-label", c.name);
         l.innerHTML = `
-          <span class="vent"></span>
-          <span class="lock-knob"></span>
+          <span class="vent" aria-hidden="true"></span>
+          <span class="lock-knob" aria-hidden="true"></span>
           <div class="chibi-slot">${ph(c.sdImg.replace("PLACEHOLDER:", ""))}</div>
           <div class="name-tag">${c.name}</div>
         `;
-        l.onclick = () => openProfile(idx);
+        l.addEventListener("click", (e) => {
+          e.stopPropagation();
+          openProfile(idx);
+        });
         grid.appendChild(l);
       });
 
       const clubLocker = document.createElement("button");
       clubLocker.type = "button";
       clubLocker.className = "locker club-locker";
+      clubLocker.setAttribute("aria-label", "Find your club");
       clubLocker.innerHTML = `
-        <span class="vent"></span>
-        <span class="lock-knob"></span>
+        <span class="vent" aria-hidden="true"></span>
+        <span class="lock-knob" aria-hidden="true"></span>
         <div class="chibi-slot">
           <svg width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><use href="#ico-star"/></svg>
         </div>
         <div class="name-tag">★ CLUB ★</div>
       `;
-      clubLocker.onclick = startClubTest;
+      clubLocker.addEventListener("click", (e) => {
+        e.stopPropagation();
+        startClubTest();
+      });
       grid.appendChild(clubLocker);
     }
 
@@ -1054,10 +1079,12 @@
         <div class="q-card">
           <div class="q-label">QUESTION</div>
           <div class="q-text" id="q-text">질문 로딩...</div>
-          <button class="choice-btn" id="btn1" type="button" onclick="answer(0)">선택지 1</button>
-          <button class="choice-btn" id="btn2" type="button" onclick="answer(1)">선택지 2</button>
+          <button class="choice-btn" id="btn1" type="button">선택지 1</button>
+          <button class="choice-btn" id="btn2" type="button">선택지 2</button>
         </div>
       `;
+      document.getElementById("btn1").addEventListener("click", () => answer(0));
+      document.getElementById("btn2").addEventListener("click", () => answer(1));
       showScreen("club-screen");
       renderProgress();
       renderTest();
@@ -1124,17 +1151,24 @@
           </div>
           <div class="members-label">★ CLUB MEMBERS ★</div>
           <div class="members-row">${membersHtml}</div>
-          <button class="back-btn" type="button" onclick="showScreen('locker-screen')">BACK TO LOCKER</button>
+          <button class="back-btn" id="back-locker-btn" type="button">BACK TO LOCKER</button>
         </div>
       `;
+      document.getElementById("back-locker-btn").addEventListener("click", () => {
+        showScreen("locker-screen");
+      });
     }
 
     document.getElementById("vol-slider").addEventListener("input", (e) => {
       bgm.volume = e.target.value;
     });
 
+    document.getElementById("main-screen").addEventListener("click", goToLocker);
     document.getElementById("main-screen").addEventListener("keydown", (e) => {
       if (e.key === "Enter" || e.key === " ") goToLocker();
+    });
+    document.querySelector("#detail-screen .close-btn").addEventListener("click", () => {
+      showScreen("locker-screen");
     });
   </script>
 </body>
