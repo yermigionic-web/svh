@@ -208,25 +208,36 @@
       text-shadow: 3px 3px 0 var(--hot);
       animation: blink 1.6s infinite;
     }
-    .splash-polaroid {
-      margin-top: 6px;
-      background: #fff;
-      border: 3px solid var(--ink);
-      padding: 8px 8px 22px;
-      box-shadow: var(--shadow);
-      transform: rotate(3deg);
-      width: 140px;
+    .splash-spinner {
+      margin-top: 4px;
+      width: 148px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
     }
-    .splash-polaroid .ph {
-      width: 100%; aspect-ratio: 1;
-      background: linear-gradient(135deg, var(--baby), var(--lilac));
-      border: 2px solid var(--ink);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 800; color: var(--deep);
+    .splash-spinner .spin-stage {
+      width: 132px;
+      height: 132px;
+      position: relative;
+      filter: drop-shadow(3px 3px 0 rgba(26, 8, 16, 0.2));
     }
-    .splash-polaroid figcaption {
+    .splash-spinner .spin-stage svg {
+      width: 100%;
+      height: 100%;
+      animation: spinY2K 10s linear infinite;
+      transform-origin: 50% 50%;
+    }
+    .splash-spinner .spin-caption {
       font-family: "Pacifico", cursive;
-      font-size: 12px; text-align: center; margin-top: 6px; color: var(--hot);
+      font-size: 13px;
+      color: var(--hot);
+      text-shadow: 1px 1px 0 #fff;
+    }
+    @keyframes spinY2K {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
 
     /* ========== LOCKER HALL ========== */
@@ -380,18 +391,70 @@
     }
     .profile-hero {
       position: relative;
-      height: 260px;
+      height: min(52vh, 420px);
+      min-height: 300px;
       background:
         repeating-linear-gradient(45deg, #ffe6f3 0 12px, #ffd0e6 12px 24px);
       border-bottom: 4px solid var(--ink);
       display: flex; align-items: flex-end; justify-content: center;
+      cursor: zoom-in;
     }
     .profile-hero .standing-img {
-      height: 95%;
-      width: auto; max-width: 78%;
+      height: 98%;
+      width: auto; max-width: 92%;
       object-fit: contain;
       object-position: bottom center;
       filter: drop-shadow(3px 3px 0 rgba(26, 8, 16, 0.18));
+      cursor: zoom-in;
+      transition: transform 0.2s ease;
+    }
+    .profile-hero .zoom-hint {
+      position: absolute;
+      top: 10px; left: 10px;
+      font-size: 10px; font-weight: 800; letter-spacing: 0.08em;
+      background: rgba(255,255,255,0.9);
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 4px 10px;
+      box-shadow: 2px 2px 0 var(--hot);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* standing lightbox zoom */
+    #standing-zoom {
+      position: fixed;
+      inset: 0;
+      z-index: 5000;
+      background: rgba(26, 8, 16, 0.72);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      cursor: zoom-out;
+      animation: popIn 0.25s ease-out;
+    }
+    #standing-zoom img {
+      max-width: min(96vw, 560px);
+      max-height: 88vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 12px 28px rgba(0,0,0,0.45));
+      cursor: zoom-out;
+      animation: popIn 0.3s ease-out;
+    }
+    #standing-zoom .zoom-close-hint {
+      position: absolute;
+      top: calc(var(--safe-top) + 12px);
+      right: 16px;
+      font-family: "Rubik Bubbles", sans-serif;
+      font-size: 0.85rem;
+      color: #fff;
+      -webkit-text-stroke: 1px var(--ink);
+      text-shadow: 2px 2px 0 var(--hot);
+      pointer-events: none;
     }
     .profile-body { padding: 18px 18px 24px; display: flex; flex-direction: column; gap: 10px; }
     .profile-name {
@@ -732,10 +795,52 @@
         />
         <div class="splash-tag script">San Ventura High</div>
         <p class="splash-sub">Meet me at corridor, MY JUNE BRAT!</p>
-        <figure class="splash-polaroid">
-          <div class="ph">IMG: mainhero<br/>placeholder</div>
-          <figcaption>multiple x and os♡</figcaption>
-        </figure>
+        <div class="splash-spinner" aria-hidden="true">
+          <div class="spin-stage">
+            <svg viewBox="0 0 160 160" role="img" aria-label="spinning sticker">
+              <!-- outer sticker plate -->
+              <circle cx="80" cy="80" r="74" fill="#fff" stroke="#1a0810" stroke-width="4"/>
+              <circle cx="80" cy="80" r="66" fill="url(#spinGrad)" stroke="#1a0810" stroke-width="3"/>
+              <circle cx="80" cy="80" r="66" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="4 6" opacity="0.7"/>
+              <!-- orbit charms -->
+              <g transform="translate(80,80)">
+                <g transform="rotate(0) translate(0,-48)">
+                  <path d="M0 10 C0 10 -12 0 -12 -6 C-12 -12 -6 -14 0 -10 C6 -14 12 -12 12 -6 C12 0 0 10 0 10Z" fill="#FF2D95" stroke="#1a0810" stroke-width="1.8"/>
+                </g>
+                <g transform="rotate(72) translate(0,-48)">
+                  <path d="M0 -10 L3 0 L12 0 L5 6 L7 16 L0 10 L-7 16 L-5 6 L-12 0 L-3 0 Z" fill="#FFE566" stroke="#1a0810" stroke-width="1.5"/>
+                </g>
+                <g transform="rotate(144) translate(0,-48)">
+                  <circle cx="0" cy="0" r="9" fill="#FFE566" stroke="#1a0810" stroke-width="1.8"/>
+                  <circle cx="-3" cy="-2" r="1.4" fill="#1a0810"/>
+                  <circle cx="3" cy="-2" r="1.4" fill="#1a0810"/>
+                  <path d="M-4 2 Q0 6 4 2" fill="none" stroke="#1a0810" stroke-width="1.5" stroke-linecap="round"/>
+                </g>
+                <g transform="rotate(216) translate(0,-48)">
+                  <ellipse cx="-5" cy="0" rx="7" ry="9" fill="#FF8EC8" stroke="#1a0810" stroke-width="1.5" transform="rotate(-20)"/>
+                  <ellipse cx="5" cy="0" rx="7" ry="9" fill="#E8B4FF" stroke="#1a0810" stroke-width="1.5" transform="rotate(20)"/>
+                  <rect x="-1.2" y="-8" width="2.4" height="16" rx="1" fill="#1a0810"/>
+                </g>
+                <g transform="rotate(288) translate(0,-48)">
+                  <path d="M0 -9 L1.5 0 L11 2 L1.5 4 L0 13 L-1.5 4 L-11 2 L-1.5 0 Z" fill="#fff" stroke="#1a0810" stroke-width="1.4"/>
+                </g>
+              </g>
+              <!-- center badge -->
+              <circle cx="80" cy="80" r="28" fill="#fff" stroke="#1a0810" stroke-width="3"/>
+              <circle cx="80" cy="80" r="22" fill="#FF2D95" stroke="#1a0810" stroke-width="2"/>
+              <text x="80" y="76" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="11" font-weight="900" fill="#fff">XOXO</text>
+              <text x="80" y="92" text-anchor="middle" font-family="Arial Black, Impact, sans-serif" font-size="14" fill="#FFE566" stroke="#1a0810" stroke-width="1.2" paint-order="stroke">★</text>
+              <defs>
+                <linearGradient id="spinGrad" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#FFD0E6"/>
+                  <stop offset="50%" stop-color="#FF8EC8"/>
+                  <stop offset="100%" stop-color="#E8B4FF"/>
+                </linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div class="spin-caption">multiple x and os♡</div>
+        </div>
         <div class="touch-cta">★ touch to start ★</div>
       </div>
     </div>
@@ -968,6 +1073,7 @@
     const bgm = document.getElementById("bgm");
 
     function showScreen(id) {
+      closeStandingZoom();
       document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
     }
@@ -1021,12 +1127,38 @@
       grid.appendChild(clubLocker);
     }
 
+    function closeStandingZoom() {
+      const overlay = document.getElementById("standing-zoom");
+      if (overlay) overlay.remove();
+    }
+
+    function openStandingZoom(src, alt) {
+      closeStandingZoom();
+      const overlay = document.createElement("div");
+      overlay.id = "standing-zoom";
+      overlay.setAttribute("role", "dialog");
+      overlay.setAttribute("aria-label", "Standing zoom");
+      overlay.innerHTML = `
+        <span class="zoom-close-hint">TAP TO CLOSE</span>
+        <img src="${src}" alt="${alt}" />
+      `;
+      const dismiss = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        closeStandingZoom();
+      };
+      overlay.addEventListener("click", dismiss);
+      overlay.querySelector("img").addEventListener("click", dismiss);
+      document.body.appendChild(overlay);
+    }
+
     function openProfile(idx) {
       const c = characters[idx];
       const club = clubs.find((x) => x.id === c.clubId);
       document.getElementById("profile-content").innerHTML = `
-        <div class="profile-hero">
-          <img class="standing-img" src="${c.img}" alt="${c.name} standing" />
+        <div class="profile-hero" id="standing-hero">
+          <span class="zoom-hint">TAP TO ZOOM ★</span>
+          <img class="standing-img" id="standing-img" src="${c.img}" alt="${c.name} standing" />
         </div>
         <div class="profile-body">
           <div class="club-tag">
@@ -1043,6 +1175,12 @@
           <div class="quote-box">"${c.quote}"</div>
         </div>
       `;
+      const zoom = (e) => {
+        e.stopPropagation();
+        openStandingZoom(c.img, `${c.name} standing`);
+      };
+      document.getElementById("standing-hero").addEventListener("click", zoom);
+      document.getElementById("standing-img").addEventListener("click", zoom);
       showScreen("detail-screen");
     }
 
