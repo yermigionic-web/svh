@@ -323,9 +323,9 @@
       overflow: hidden;
       display: flex; align-items: center; justify-content: center;
     }
-    .locker .chibi-slot img,
-    .locker .chibi-slot .ph-img {
-      width: 100%; height: 100%; object-fit: cover;
+    .locker .chibi-slot img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center top;
+      display: block;
     }
     .locker .name-tag {
       font-size: 10px; font-weight: 800; text-align: center;
@@ -386,20 +386,12 @@
       border-bottom: 4px solid var(--ink);
       display: flex; align-items: flex-end; justify-content: center;
     }
-    .profile-hero .standing-ph {
+    .profile-hero .standing-img {
       height: 95%;
-      width: auto; max-width: 70%;
+      width: auto; max-width: 78%;
       object-fit: contain;
-    }
-    .profile-hero .standing-ph.placeholder {
-      width: 55%; height: 85%;
-      background: linear-gradient(180deg, #fff, var(--bubble));
-      border: 3px dashed var(--deep);
-      border-radius: 16px 16px 0 0;
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 6px;
-      font-size: 12px; font-weight: 800; color: var(--deep);
-      margin-bottom: 0;
+      object-position: bottom center;
+      filter: drop-shadow(3px 3px 0 rgba(26, 8, 16, 0.18));
     }
     .profile-body { padding: 18px 18px 24px; display: flex; flex-direction: column; gap: 10px; }
     .profile-name {
@@ -802,8 +794,10 @@
   <script>
     /* =========================================================
        DATA — characters, clubs, quiz
-       Image paths are placeholders; swap src when assets ready.
+       Assets hosted on yermigionic-web/jb
        ========================================================= */
+
+    const ASSET_BASE = "https://raw.githubusercontent.com/yermigionic-web/jb/refs/heads/main/";
 
     const characters = [
       {
@@ -815,8 +809,8 @@
         quote: "You look outdated. Get something new. Like me. (구리네. 신상 좀 들여. 나 같은 거.)",
         clubId: "glitter",
         role: "President · Glitter Clique",
-        img: "PLACEHOLDER:madison_standing.png",
-        sdImg: "PLACEHOLDER:madison_chibi.png"
+        img: ASSET_BASE + "madison_standing.png",
+        sdImg: ASSET_BASE + "madison_chibi.png"
       },
       {
         id: "riley",
@@ -827,8 +821,8 @@
         quote: "I like boys. End of discussion. (나 남자 좋아해. 대화 끝.)",
         clubId: "wildcards",
         role: "Shop Lead · Wild Cards",
-        img: "PLACEHOLDER:riley_standing.png",
-        sdImg: "PLACEHOLDER:riley_chibi.png"
+        img: ASSET_BASE + "riley_standing.png",
+        sdImg: ASSET_BASE + "riley_chibi.png"
       },
       {
         id: "tavi",
@@ -839,8 +833,8 @@
         quote: "I don't do drugs, praying, and friends. (난 마약, 기도, 친구 안 해.)",
         clubId: "midnight",
         role: "Silent Member · Midnight Hearts",
-        img: "PLACEHOLDER:tavi_standing.png",
-        sdImg: "PLACEHOLDER:tavi_chibi.png"
+        img: ASSET_BASE + "tavi_standing.png",
+        sdImg: ASSET_BASE + "tavi_chibi.png"
       },
       {
         id: "cassidy",
@@ -851,8 +845,8 @@
         quote: "I take actions of all kinds. Try me. (난 뭐든 맞다이 깨는 편이야. 증명해 줄까?)",
         clubId: "glitter",
         role: "Captain · Glitter Clique",
-        img: "PLACEHOLDER:cassidy_standing.png",
-        sdImg: "PLACEHOLDER:cassidy_chibi.png"
+        img: ASSET_BASE + "cassidy_standing.png",
+        sdImg: ASSET_BASE + "cassidy_chibi.png"
       },
       {
         id: "rowan",
@@ -863,8 +857,8 @@
         quote: "...Slipknot? Poser. (슬립낫 듣는다고? 알못.)",
         clubId: "midnight",
         role: "Founder · Midnight Hearts",
-        img: "PLACEHOLDER:rowan_standing.png",
-        sdImg: "PLACEHOLDER:rowan_chibi.png"
+        img: ASSET_BASE + "rowan_standing.png",
+        sdImg: ASSET_BASE + "rowan_chibi.png"
       },
       {
         id: "lena",
@@ -875,8 +869,8 @@
         quote: "...No offense taken. And I'm, for the last time, korean. (나쁘게 생각은 안 할게. 진짜 마지막으로 말하는 건데, 난 한국인이야.)",
         clubId: "honor",
         role: "Treasurer · Honor Roll",
-        img: "PLACEHOLDER:lena_standing.png",
-        sdImg: "PLACEHOLDER:lena_chibi.png"
+        img: ASSET_BASE + "lena_standing.png",
+        sdImg: ASSET_BASE + "lena_chibi.png"
       },
       {
         id: "claire",
@@ -887,8 +881,8 @@
         quote: "You can tell me anything. Love counsel? Maybe. (뭐든 말해 줘도 좋아. 연애 상담? 글쎄.)",
         clubId: "honor",
         role: "President · Honor Roll",
-        img: "PLACEHOLDER:claire_standing.png",
-        sdImg: "PLACEHOLDER:claire_chibi.png"
+        img: ASSET_BASE + "claire_standing.png",
+        sdImg: ASSET_BASE + "claire_chibi.png"
       },
       {
         id: "lyra",
@@ -899,8 +893,8 @@
         quote: "Did you notice the interstellar shift? (성간 이동, 눈치챘어?)",
         clubId: "wildcards",
         role: "Stargazer · Wild Cards",
-        img: "PLACEHOLDER:lyra_standing.png",
-        sdImg: "PLACEHOLDER:lyra_chibi.png"
+        img: ASSET_BASE + "lyra_standing.png",
+        sdImg: ASSET_BASE + "lyra_chibi.png"
       }
     ];
 
@@ -983,10 +977,6 @@
     let scores = { glitter: 0, midnight: 0, honor: 0, wildcards: 0 };
     const bgm = document.getElementById("bgm");
 
-    function ph(label) {
-      return `<div class="ph-img">IMG<br/>${label}</div>`;
-    }
-
     function showScreen(id) {
       document.querySelectorAll(".screen").forEach((s) => s.classList.remove("active"));
       document.getElementById(id).classList.add("active");
@@ -1010,7 +1000,9 @@
         l.innerHTML = `
           <span class="vent" aria-hidden="true"></span>
           <span class="lock-knob" aria-hidden="true"></span>
-          <div class="chibi-slot">${ph(c.sdImg.replace("PLACEHOLDER:", ""))}</div>
+          <div class="chibi-slot">
+            <img src="${c.sdImg}" alt="${c.name}" loading="lazy" />
+          </div>
           <div class="name-tag">${c.name}</div>
         `;
         l.addEventListener("click", (e) => {
@@ -1044,7 +1036,7 @@
       const club = clubs.find((x) => x.id === c.clubId);
       document.getElementById("profile-content").innerHTML = `
         <div class="profile-hero">
-          <div class="standing-ph placeholder">IMG<br/>${c.img.replace("PLACEHOLDER:", "")}<br/><span style="font-weight:600;opacity:.7">standing</span></div>
+          <img class="standing-img" src="${c.img}" alt="${c.name} standing" />
         </div>
         <div class="profile-body">
           <div class="club-tag">
@@ -1123,7 +1115,9 @@
         .map(
           (m) => `
         <div class="member-card">
-          <div class="avatar">${ph(m.sdImg.replace("PLACEHOLDER:", ""))}</div>
+          <div class="avatar">
+            <img src="${m.sdImg}" alt="${m.name}" loading="lazy" />
+          </div>
           <div class="m-name">${m.name}</div>
           <div class="m-role">${m.role.split("·")[0].trim()}</div>
         </div>`
