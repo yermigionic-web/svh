@@ -1284,6 +1284,9 @@
     document.querySelector("#detail-screen .close-btn").addEventListener("click", () => {
       showScreen("locker-screen");
     });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeStandingZoom();
+    });
   </script>
 </body>
 </html>
