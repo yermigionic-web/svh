@@ -599,9 +599,9 @@
       overflow: hidden;
       display: flex; align-items: center; justify-content: center;
     }
-    .member-card .avatar img,
-    .member-card .avatar .ph-img {
-      width: 100%; height: 100%; object-fit: cover;
+    .member-card .avatar img {
+      width: 100%; height: 100%; object-fit: cover; object-position: center top;
+      display: block;
     }
     .member-card .m-name {
       font-size: 12px; font-weight: 800; line-height: 1.2;
@@ -625,16 +625,6 @@
     .back-btn:active {
       transform: translate(3px, 3px);
       box-shadow: 2px 2px 0 var(--ink);
-    }
-
-    /* placeholder image block */
-    .ph-img {
-      width: 100%; height: 100%;
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 2px;
-      font-size: 9px; font-weight: 800; color: var(--deep);
-      text-align: center; padding: 4px;
-      background: linear-gradient(145deg, #fff 0%, var(--baby) 100%);
     }
 
     /* tiny sparkle dots on splash */
@@ -1001,7 +991,7 @@
           <span class="vent" aria-hidden="true"></span>
           <span class="lock-knob" aria-hidden="true"></span>
           <div class="chibi-slot">
-            <img src="${c.sdImg}" alt="${c.name}" loading="lazy" />
+            <img src="${c.sdImg}" alt="${c.name}" loading="lazy" onerror="this.onerror=null;this.src='${c.img}'" />
           </div>
           <div class="name-tag">${c.name}</div>
         `;
@@ -1116,7 +1106,7 @@
           (m) => `
         <div class="member-card">
           <div class="avatar">
-            <img src="${m.sdImg}" alt="${m.name}" loading="lazy" />
+            <img src="${m.sdImg}" alt="${m.name}" loading="lazy" onerror="this.onerror=null;this.src='${m.img}'" />
           </div>
           <div class="m-name">${m.name}</div>
           <div class="m-role">${m.role.split("·")[0].trim()}</div>
